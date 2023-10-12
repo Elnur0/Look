@@ -38,14 +38,17 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # django apps
     'accounts',
     'mainapp',
     'settings',
 
+    # third party apps
     'mptt',
     'ckeditor',
     'taggit',
     'rest_framework',
+    'django_filters',
 
 ]
 

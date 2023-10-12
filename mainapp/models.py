@@ -4,6 +4,8 @@ from ckeditor.fields import RichTextField
 from django.contrib.auth import get_user_model, authenticate
 from taggit.managers import TaggableManager
 
+from .generator import generate_random_number
+
 
 User = get_user_model()
 
@@ -17,6 +19,12 @@ Status = (
     ('New', 'New')
 )
 
+
+COMPANY_STATUS_CHOICES = (
+    ("Activate", "Activate"),
+    ("Deactivate", "Deactivate"),
+
+)
 
 
 Rating = (
@@ -71,7 +79,7 @@ class Size(BaseModel,DateMixin):
 
 
 class Color(BaseModel,DateMixin):
-    kod = models.CharField(max_length=100, blank=True, null=True)
+    code = models.CharField(max_length=100, blank=True, null=True)
 
 
     def __str__(self):
@@ -124,30 +132,18 @@ class Brends(BaseModel,DateMixin):
 
 
 
-class Basket(DateMixin):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
-    products = models.ForeignKey("mainapp.Product", on_delete=models.CASCADE, blank=True, null=True)
-    quantity = models.PositiveIntegerField(default=1)
-
-    def __str__(self):
-            return self.user.email
-    
-
-    class Meta:
-        verbose_name = 'Basket'
-        verbose_name_plural = 'Basket'
 
 
 
-
-
-class Company(BaseModel):
+class Company(DateMixin):
     dis_price = models.FloatField(blank=True, null=True)
-    kupon = models.CharField(max_length=100,blank=True, null=True, unique=True)
+    coupon = models.CharField(max_length=100,blank=True, null=True, unique=True)
+    status = models.CharField(max_length=50, choices=COMPANY_STATUS_CHOICES, default="Activate")
 
 
     def __str__(self) -> str:
-        return self.kupon
+        return self.coupon
+
     
 
 
@@ -157,7 +153,7 @@ class Product(DateMixin):
     title = models.CharField(max_length=100, blank=True, null=True)
     description = RichTextField(blank=True, null=True)
     size = models.ManyToManyField(Size, blank=True)
-    color = models.ForeignKey(Color, on_delete=models.CASCADE, blank=True, null=True)
+    color = models.ManyToManyField(Color, blank=True)
     view = models.IntegerField(default=0)
     price = models.FloatField(blank=True, null=True)
     discount = models.FloatField(blank=True, null=True)
@@ -165,8 +161,14 @@ class Product(DateMixin):
     status = models.CharField(max_length=100, choices = Status, blank=True, null=True)
     wishlist = models.ManyToManyField(User, blank=True) 
     tags = TaggableManager()
-    sku = models.PositiveIntegerField(blank=True, null=True)
+    sku = models.CharField(max_length=6, default=generate_random_number, unique=True, blank=True, null=True)
     count = models.PositiveIntegerField(default=0)
+
+
+    def save(self, *args, **kwargs):
+        if not self.sku:
+            self.sku = generate_random_number()
+        super().save(*args, **kwargs)
 
 
     def __str__(self):
@@ -183,6 +185,24 @@ class Product(DateMixin):
 
 def upload_to_product(instance, filename):
     return f"product/{instance.product.title}/{filename}"
+
+
+
+
+
+
+class Basket(DateMixin):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+    products = models.ForeignKey(Product, on_delete=models.CASCADE, blank=True, null=True)
+    quantity = models.PositiveIntegerField(default=1)
+
+    def __str__(self):
+            return self.user.email
+    
+
+    class Meta:
+        verbose_name = 'Basket'
+        verbose_name_plural = 'Basket'
 
 
 

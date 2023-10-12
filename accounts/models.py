@@ -4,6 +4,13 @@ from django.contrib.auth import get_user_model
 
 # User = get_user_model()
 
+ADDRESS_LIST_CHOICES = (
+    ("Billing address","Billing address"),
+    ("Shipping address","Shipping address"),
+    ("Work address","Work address"),
+    ("House address","House address")
+)
+
 
 
 class MyUserManager(BaseUserManager):
@@ -78,3 +85,10 @@ class Profile(BaseModel):
    
    def __str__(self):
     return self.user.email
+   
+
+
+
+class Address(BaseModel):
+    name = models.CharField(max_length=100, choices=ADDRESS_LIST_CHOICES)
+    description = models.TextField(max_length=250)

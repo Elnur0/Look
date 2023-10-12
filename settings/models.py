@@ -1,5 +1,9 @@
 from django.db import models
 from ckeditor.fields import RichTextField
+from mainapp.models import Product
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 # Create your models here.
@@ -53,12 +57,7 @@ class Branch(DateMixin):
         verbose_name_plural = 'Branchs'
 
 
-    
-
-
-
-
-     
+         
 
 class FAQ(BaseModel,DateMixin):
     question = RichTextField(max_length=300, verbose_name=("Sual"))
@@ -70,3 +69,27 @@ class FAQ(BaseModel,DateMixin):
 
     class Meta:
         ordering = ("order",)
+
+
+
+class OrderItems(DateMixin):
+    products = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
+
+    def __str__(self):
+        return self.products.title
+    
+
+    
+class Order(DateMixin):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    items = models.ManyToManyField(OrderItems, blank=True)
+
+    def __str__(self):
+        return self.user.email
+    
+    class Meta:
+        verbose_name_plural = "Orders"
+        verbose_name = "Order"
+        
+        

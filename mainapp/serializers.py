@@ -5,8 +5,39 @@ from django.utils.html import strip_tags
 
 from .models import (
     Product, ProductsReview, ProductImage,
-    Basket,
+    Basket, Category, Size, Color
     )
+
+class ColorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Color
+        fields = ('id', 'name', 'code' )
+
+
+
+
+class SizeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Size
+        fields = ('id', 'name' )
+
+
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ('id', 'name', 'children')
+
+    
+    def to_representation(self, instance):
+        repr_ = super().to_representation(instance)
+        qs = Category.objects.filter(parent=instance)
+
+        if  qs.exists():
+            repr_['children'] = CategorySerializer(qs, many=True).data
+        return repr_
+
 
 
 
@@ -20,11 +51,17 @@ class ProductImageSerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
+    category = CategorySerializer()
     total_price = serializers.FloatField(read_only=True) 
     class Meta:
         model = Product
-        # exclude = 
-        fields = ('id', 'title', 'total_price', 'discount')
+        fields = ('id', 'title', 'category', 'total_price', 'discount')
+
+
+    def to_representation(self, instance):                
+        repr_ = super().to_representation(instance)
+        repr_["category"] = CategorySerializer(instance.category).data
+        return repr_
 
 
     def to_representation(self, instance):
@@ -129,3 +166,31 @@ class BasketSerializer(serializers.ModelSerializer):
     class Meta:
         model = Basket
         fields = ("products", )
+
+
+class BasketListSerializer(serializers.ModelSerializer):
+    name = serializers.SerializerMethodField()
+    image = serializers.SerializerMethodField()
+    total_price = serializers.SerializerMethodField()
+    quantity = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Basket
+        fields = ("products", "name", "image", "total_price", "quantity")
+        extra_kwargs = {
+            "products":{"read_only":True}
+        }
+
+    def get_name(self, obj):
+        return obj.products.title
+    
+    def get_image(self, obj):
+        return ProductImageSerializer(obj.products.productimage_set.first()).data
+    
+    def get_total_price(self, obj):
+        disc_price = obj.products.price * (obj.products.discount or 0) / 100
+        return obj.products.price - disc_price
+    
+    def get_quantity(self, obj):
+        return obj.quantity
+
