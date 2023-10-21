@@ -168,6 +168,8 @@ class BasketSerializer(serializers.ModelSerializer):
         fields = ("products", )
 
 
+
+
 class BasketListSerializer(serializers.ModelSerializer):
     name = serializers.SerializerMethodField()
     image = serializers.SerializerMethodField()

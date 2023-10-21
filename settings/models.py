@@ -16,17 +16,11 @@ class DateMixin(models.Model):
         abstract = True
         
 
+def upload_to_logo(instance, filename):
+    return f"logo/{instance.logo}/{filename}"
 
-class BaseModel(models.Model):
-    name = models.CharField(max_length=100, blank=True, null=True)
-
-    class Meta:
-        abstract = True
-
-
-
-class Settings(BaseModel,DateMixin):
-    logo = models.ImageField(blank=True, null=True)
+class Settings(DateMixin):
+    logo = models.ImageField(upload_to=upload_to_logo, blank=True, null=True)
     address = RichTextField(blank=True, null=True)
     number = models.CharField( max_length=50, blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
@@ -35,11 +29,11 @@ class Settings(BaseModel,DateMixin):
     
 
     def __str__(self):
-        return self.name
+        return self.email
     
     class Meta:
         verbose_name = 'Setting'
-        verbose_name_plural = 'Settings'
+        verbose_name_plural = 'Setting'
 
 
 
@@ -59,7 +53,7 @@ class Branch(DateMixin):
 
          
 
-class FAQ(BaseModel,DateMixin):
+class FAQ(DateMixin):
     question = RichTextField(max_length=300, verbose_name=("Sual"))
     answer = RichTextField(max_length=10000, verbose_name=("Cavab"))
     order = models.IntegerField(default=0, verbose_name=("Sıra"))
@@ -93,3 +87,40 @@ class Order(DateMixin):
         verbose_name = "Order"
         
         
+
+
+class Newsletter(DateMixin):
+    email = models.EmailField(unique=True)
+
+    def __str__(self):
+        return self.email
+    
+    class Meta:
+        verbose_name_plural = "Newsletters"
+        verbose_name = "Newsletter"
+
+
+
+
+class ContactUs(DateMixin):
+    firs_name = models.CharField(max_length=60)
+    last_name = models.CharField(max_length=60)
+    email = models.EmailField()
+    messages = models.TextField()
+
+    def __str__(self):
+        return f"{self.firs_name} {self.last_name}"
+    
+    class Meta:
+        verbose_name_plural = "Contacts"
+        verbose_name = "ContactUs"
+
+
+
+
+class About(DateMixin):
+
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        About.objects.exclude(id=self.id).delete()
