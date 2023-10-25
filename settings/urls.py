@@ -8,4 +8,6 @@ urlpatterns = [
     path('subscribe/', views.NewslettercreateView.as_view(), name='subscribe'),
     path('faq/', views.FAQListView.as_view(), name='faq'),
     path('contact/', views.ContactView.as_view(), name='contact'),
+    path('about/', views.AboutView.as_view(), name='about'),
+
 ]

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Newsletter, FAQ, ContactUs, Settings
+from .models import Newsletter, FAQ, ContactUs, Settings, About
 from mainapp.serializers import CustomRichTextField
 
 
@@ -34,3 +34,11 @@ class SettingsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Settings
         exclude = ("id",)
+
+
+
+class AboutSerializer(serializers.ModelSerializer):
+    description_ = CustomRichTextField(source='description')
+    class Meta:
+        model = About
+        fields = ("title", "description_", "image")

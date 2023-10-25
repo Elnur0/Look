@@ -118,9 +118,24 @@ class ContactUs(DateMixin):
 
 
 
+def upload_to_about(instance, filename):
+    return f"about/{instance.title}/{filename}"
+
+
 class About(DateMixin):
+    title = models.CharField(max_length=100, blank=True, null=True)
+    description = RichTextField(blank=True, null=True)
+    image = models.ImageField(upload_to=upload_to_about, blank=True, null=True)
 
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         About.objects.exclude(id=self.id).delete()
+
+
+    def __str__(self):
+        return self.title
+    
+    class Meta:
+        verbose_name_plural = "About"
+        verbose_name = "About"
