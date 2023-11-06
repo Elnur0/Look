@@ -30,8 +30,8 @@ from services.pagination import CustomPagination
 
 class PrductListView(generics.ListAPIView):                         
     queryset = Product.objects.annotate(discount_price=Coalesce(
-        F("discount"), 0, output_field=FloatField()),
-        disc_price = F("price")*F("discount")/100,
+        "discount", 0, output_field=FloatField()),
+        disc_price = F("price")*F("discount_price")/100,
         total_price=F("price")-F("disc_price")
         ).order_by("-created_at")
     serializer_class = ProductSerializer
@@ -52,8 +52,8 @@ class PrductListView(generics.ListAPIView):
 
 class ProductDetailView(generics.RetrieveAPIView):
     queryset = Product.objects.annotate(discount_price=Coalesce(
-        F("discount"), 0, output_field=FloatField()),
-        disc_price = F("price")*F("discount")/100,
+        "discount", 0, output_field=FloatField()),
+        disc_price = F("price")*F("discount_price")/100,
         total_price=F("price")-F("disc_price")
         ).order_by("-created_at")
 
