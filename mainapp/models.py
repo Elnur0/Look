@@ -111,7 +111,7 @@ class Category(BaseModel,MPTTModel,DateMixin):
 
     
 def upload_to_brends(instance, filename):
-    return f"brends/{instance.brends.name}/{filename}"
+    return f"brends/{instance.name}/{filename}"
 
 
 
@@ -183,14 +183,6 @@ class Product(DateMixin):
 
 
 
-def upload_to_product(instance, filename):
-    return f"product/{instance.product.title}/{filename}"
-
-
-
-
-
-
 class Basket(DateMixin):
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
     products = models.ForeignKey(Product, on_delete=models.CASCADE, blank=True, null=True)
@@ -204,6 +196,13 @@ class Basket(DateMixin):
         verbose_name = 'Basket'
         verbose_name_plural = 'Basket'
 
+
+
+
+
+
+def upload_to_product(instance, filename):
+    return f"product/{instance.product.title}/{filename}"
 
 
 class ProductImage(DateMixin):

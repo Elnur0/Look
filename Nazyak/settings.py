@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'taggit',
     'rest_framework',
     'django_filters',
+    
 
 ]
 
@@ -160,17 +161,17 @@ REST_FRAMEWORK = {
     # 'PAGE_SIZE': 2,
     # 'DEFAULT_PERMISSION_CLASSES': [
     #     'rest_framework.permissions.IsAuthenticated',
-    # ],
+    # ],STATIC_URL = 'static/'
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         "rest_framework.authentication.BasicAuthentication",
         "rest_framework.authentication.SessionAuthentication",
     )
 }
-# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-EMAIL_HOST = "smtp.gmail.com"
-EMAIL_HOST_USER = "nokal8308@gmail.com"
-EMAIL_HOST_PASSWORD = "ljoglkfbxwgcjdao"
-EMAIL_PORT = 465
-EMAIL_USE_TLS = False
-EMAIL_USE_SSL = True
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# EMAIL_HOST = "smtp.gmail.com"
+# EMAIL_HOST_USER = "nokal8308@gmail.com"
+# EMAIL_HOST_PASSWORD = "ljoglkfbxwgcjdao"
+# EMAIL_PORT = 465
+# EMAIL_USE_TLS = False
+# EMAIL_USE_SSL = True
