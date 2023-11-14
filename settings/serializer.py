@@ -1,7 +1,11 @@
 from rest_framework import serializers
-
-from .models import Newsletter, FAQ, ContactUs, Settings, About
 from mainapp.serializers import CustomRichTextField
+
+from .models import (
+Newsletter, FAQ, ContactUs, Settings, 
+About, Shipping, Payment, Country,
+)
+
 
 
 class NewsletterSerializer(serializers.ModelSerializer):
@@ -42,3 +46,7 @@ class AboutSerializer(serializers.ModelSerializer):
     class Meta:
         model = About
         fields = ("title", "description_", "image")
+
+
+class ShippingSerializer(serializers.ModelSerializer):
+    ...

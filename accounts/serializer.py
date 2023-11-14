@@ -18,7 +18,7 @@ User = get_user_model()
 
 
 class LoginSerializer(serializers.ModelSerializer):
-    email = serializers.EmailField()        # email usermodel modelinden geldiyi ucun avtomatik ozu yenisini yaratmaga calisir buna gore burda fieldi yeniden ozumuz yenisini yaradiriq
+    email = serializers.EmailField()        # email usermodel modelinden geldiyi ucun avtomatik ozu yenisini yaratmaga calisir buna gore burda fieldi ozumuz yenisini yaradiriq
     class Meta:
         model = User
         fields = ("email", "password")

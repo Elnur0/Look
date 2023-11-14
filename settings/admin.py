@@ -1,5 +1,9 @@
 from django.contrib import admin
-from .models import Order, OrderItems, Newsletter, FAQ, ContactUs, Settings
+from .models import (
+Order, OrderItems, Newsletter,
+FAQ, ContactUs, Settings,
+Shipping, Payment,Country,
+)
 
 
 @admin.register(Settings)
@@ -24,3 +28,6 @@ admin.site.register(Order)
 admin.site.register(Newsletter)
 admin.site.register(FAQ)
 admin.site.register(ContactUs)
+admin.site.register(Shipping)
+admin.site.register(Payment)
+admin.site.register(Country)

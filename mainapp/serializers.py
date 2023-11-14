@@ -55,7 +55,7 @@ class ProductSerializer(serializers.ModelSerializer):
     total_price = serializers.FloatField(read_only=True) 
     class Meta:
         model = Product
-        fields = ('id', 'title', 'category', 'total_price', 'discount')
+        fields = ('id', 'title', 'category','price', 'total_price', 'discount')
 
 
     def to_representation(self, instance):                
@@ -93,7 +93,7 @@ class ProductDetailSerializer(serializers.ModelSerializer):
     description_ = CustomRichTextField(source="description", read_only=True) 
     class Meta:
         model = Product
-        exclude = ("price", "description")
+        exclude = ("description",)
         extra_kwargs = {
             "title": {"read_only": True},
             "sku": {"read_only": True},
