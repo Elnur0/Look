@@ -9,13 +9,11 @@ class CustomPermission(BasePermission):
 
 
 class HasAddDeletePermission(BasePermission):
-
-
     def has_delete_permission(self, request, obj=None):
-            if request.user.email == 'admin@gmail.com':
-                return True
-            else:
-                return False
+        if request.user.email == 'admin@gmail.com':
+            return True
+        else:
+            return False
         
     def has_add_permission(self, request):
         if request.user.email == 'admin@gmail.com':

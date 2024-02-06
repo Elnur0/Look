@@ -3,7 +3,7 @@ from mainapp.serializers import CustomRichTextField
 
 from .models import (
 Newsletter, FAQ, ContactUs, Settings, 
-About, Shipping, Payment, Country,
+About, Shipping, Payment, 
 )
 
 
@@ -48,5 +48,22 @@ class AboutSerializer(serializers.ModelSerializer):
         fields = ("title", "description_", "image")
 
 
+
+
 class ShippingSerializer(serializers.ModelSerializer):
-    ...
+    class Meta:
+        model = Shipping
+        exclude = ("id", "updated_at", "created_at")
+        extra_kwargs = {
+            "shippig_method": {"read_only": True}
+        }
+
+
+
+
+class PaymentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Payment
+        # exclude = "__all__"
+        exclude = ("id", "updated_at", "created_at")
+

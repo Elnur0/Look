@@ -1,4 +1,4 @@
-from rest_framework import generics
+from rest_framework import generics, serializers
 from rest_framework.response import Response
 from django.shortcuts import render
 from django.db.models import Avg, F, FloatField, Sum, ExpressionWrapper, Value
@@ -14,12 +14,16 @@ from .serializers import (
 ProductSerializer, ProductDetailSerializer, CommentSerializer,
 WishlistSerializer, BasketSerializer, CategorySerializer, 
 SizeSerializer, ColorSerializer, BasketListSerializer,
+BrendSerializer,
 )
 
 from .models import(
 Product, Category, Brends, Size, Color,
 Company, Basket, ProductsReview,
 )
+
+from blog.models import Blogs
+from blog.serializer import BlogSerializer
 
 from .filters import ProductFilter
 from settings.models import Order, OrderItems
@@ -70,12 +74,12 @@ class ProductDetailView(generics.RetrieveAPIView):
     
 
     def put(self, request, *args, **kwargs):
-        if request.method == "PUT":
-            serializer = CommentSerializer(data=request.data)
-            serializer.is_valid(raise_exception=True)
-            serializer.save(user=request.user, product=self.get_object())
-            return Response(serializer.data)
-        return Response({})
+        serializer = CommentSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(user=request.user, product=self.get_object())
+        product = ProductDetailSerializer(self.get_object()).data
+        return Response(product)
+    
 
 
 
@@ -220,3 +224,36 @@ class ColorView(generics.ListAPIView):
     serializer_class = ColorSerializer
 
 
+
+class BrendView(generics.ListAPIView):
+    queryset = Brends.objects.all()
+    serializer_class = BrendSerializer
+
+
+
+# class SearchResultSerializer(serializers.Serializer):
+#     product = ProductSerializer(required=False)
+#     blog = BlogSerializer(required=False)
+#     brand = BrendSerializer(required=False)
+
+
+# class SearchView(generics.ListAPIView):
+#     serializer_class = SearchResultSerializer
+#     search_param = 'search'
+
+    # def get_serializer_class(self):
+    #     if self.request.query_params.get(self.search_param):
+    #         return SearchResultSerializer
+    #     return BrendSerializer
+    # filterset_class = ProductFilter
+
+    # def get_queryset(self):
+    #     search_query = self.request.query_params.get(self.search_param, '')
+
+    #     product_results = Product.objects.filter(title__icontains=search_query)
+    #     blog_results = Blogs.objects.filter(title__icontains=search_query)
+    #     brend_results = Brends.objects.filter(name__icontains=search_query)
+
+    #     all_results = list(product_results) + list(blog_results) + list(brend_results)
+
+    #     return all_results

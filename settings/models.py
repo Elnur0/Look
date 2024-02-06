@@ -14,6 +14,8 @@ SHIPPING_METHOD = (
 
 PAY_CHOICES = (
     ("Pay by card", "Pay by card"),
+    ("Pay at the door", "Pay at the door"),
+    ("PayPal", "PayPal"),
 )
 
 

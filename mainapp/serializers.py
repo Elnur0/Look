@@ -2,11 +2,22 @@ from rest_framework import serializers
 import string
 from django.db.models import Avg, F
 from django.utils.html import strip_tags
+from django.db.models import Avg, F, FloatField, Sum, ExpressionWrapper, Value
+from django.db.models.functions import Coalesce
 
 from .models import (
     Product, ProductsReview, ProductImage,
-    Basket, Category, Size, Color
+    Basket, Category, Size, Color, Brends
     )
+
+class BrendSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Brends
+        # fiedls = ('id', 'name', 'description', 'icone')
+        # fields = '__all__'
+        exclude = ('id', 'icone')
+
+
 
 class ColorSerializer(serializers.ModelSerializer):
     class Meta:
@@ -55,7 +66,7 @@ class ProductSerializer(serializers.ModelSerializer):
     total_price = serializers.FloatField(read_only=True) 
     class Meta:
         model = Product
-        fields = ('id', 'title', 'category','price', 'total_price', 'discount')
+        fields = ('id', 'title', 'category', 'price', 'total_price', 'discount')
 
 
     def to_representation(self, instance):                
@@ -90,10 +101,10 @@ class CustomRichTextField(serializers.Field):
 
 class ProductDetailSerializer(serializers.ModelSerializer):
     total_price = serializers.FloatField(read_only=True)
-    description_ = CustomRichTextField(source="description", read_only=True) 
+    # description_ = CustomRichTextField(source="description", read_only=True) 
     class Meta:
         model = Product
-        exclude = ("description",)
+        exclude = ("description_az", "description_en", "title_az", "title_en","aditional_info_az", "aditional_info_en")
         extra_kwargs = {
             "title": {"read_only": True},
             "sku": {"read_only": True},
@@ -107,6 +118,8 @@ class ProductDetailSerializer(serializers.ModelSerializer):
             "wishlist": {"read_only": True},
             "count": {"read_only": True},
             "view": {"read_only": True},
+            "description": {"read_only": True},
+            "aditional_info": {"read_only": True},
         }
 
         
@@ -115,12 +128,20 @@ class ProductDetailSerializer(serializers.ModelSerializer):
         rating = instance.productsreview_set.aggregate(Avg(F("rating")))['rating__avg']
 
 
-        image = instance.productimage_set.first()
+        image = instance.productimage_set.all()
 
-        images = ProductImageSerializer(image).data
+        images = ProductImageSerializer(image, many=True).data
+        products = Product.objects.annotate(discount_price=Coalesce(
+        "discount", 0, output_field=FloatField()),
+        disc_price = F("price")*F("discount_price")/100,
+        total_price=F("price")-F("disc_price")
+        ).order_by("-created_at")
+
+        repr_["releated_products"] = ProductSerializer(products.filter(category=instance.category).exclude(id=instance.id)[:4], many=True).data
         repr_["comments"] = CommentSerializer(instance.productsreview_set.all(), many=True).data
         repr_["image"] = images
         repr_["rating"] = round((rating or 0), 1)
+
         return repr_
 
 

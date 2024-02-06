@@ -14,6 +14,8 @@ urlpatterns = [
     path('categores/', views.CategoryView.as_view(), name='category'),
     path('sizes/', views.SizeView.as_view(), name='size'),
     path('colors/', views.ColorView.as_view(), name='color'),
+    path('brends/', views.BrendView.as_view(), name='brend'),
+    # path('search/', views.SearchView.as_view(), name='global_search'),
 ]
     
 

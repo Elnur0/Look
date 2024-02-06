@@ -1,6 +1,7 @@
 import django_filters
 
-from .models import Product, Size, Category, Color
+from .models import Product, Size, Category, Color, Brends
+from blog.models import Blogs
 
 
 class ProductFilter(django_filters.FilterSet):
@@ -14,3 +15,17 @@ class ProductFilter(django_filters.FilterSet):
     class Meta:
         model = Product
         fields = ("title", "price_max", "price_min", "category", "size", "color")
+
+
+# class AllSearch(django_filters.FilterSet):
+
+#     def get_queryset(self):
+#             search_query = self.request.query_params.get(self.search_param, '')
+
+#             product_results = Product.objects.filter(title__icontains=search_query)
+#             blog_results = Blogs.objects.filter(title__icontains=search_query)
+#             brend_results = Brends.objects.filter(name__icontains=search_query)
+
+#             all_results = list(product_results) + list(blog_results) + list(brend_results)
+
+#             return all_results

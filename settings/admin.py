@@ -1,8 +1,11 @@
 from django.contrib import admin
+from modeltranslation.admin import TranslationAdmin
+
 from .models import (
 Order, OrderItems, Newsletter,
 FAQ, ContactUs, Settings,
 Shipping, Payment,Country,
+About,
 )
 
 
@@ -22,11 +25,24 @@ class SettingsAdmin(admin.ModelAdmin):
         else:
             return False
         
+# admin.site.register(FAQ)
+
+
+class FaqAdmin(TranslationAdmin):
+    list_display =('question', 'answer', 'order' )
+
+admin.site.register(FAQ, FaqAdmin)
+
+
+class AboutAdmin(TranslationAdmin):
+    list_display = ('title',)
+
+admin.site.register(About, AboutAdmin)
+
 
 admin.site.register(OrderItems)
 admin.site.register(Order)
 admin.site.register(Newsletter)
-admin.site.register(FAQ)
 admin.site.register(ContactUs)
 admin.site.register(Shipping)
 admin.site.register(Payment)

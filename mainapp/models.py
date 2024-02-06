@@ -48,7 +48,6 @@ class DateMixin(models.Model):
 
 
 
-
 class BaseModel(models.Model):
     name = models.CharField(max_length=100, blank=True, null=True)
 
@@ -92,28 +91,9 @@ class Color(BaseModel,DateMixin):
     
 
 
-
-
-class Category(BaseModel,MPTTModel,DateMixin):
-    parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
-
-
-    def __str__(self):
-        return self.name
-    
-
-    class Meta:
-        verbose_name = 'Category'
-        verbose_name_plural = 'Categories'
-
-
-
-
-    
+   
 def upload_to_brends(instance, filename):
     return f"brends/{instance.name}/{filename}"
-
-
 
 class Brends(BaseModel,DateMixin):
     description = RichTextField(blank=True, null=True)
@@ -132,19 +112,28 @@ class Brends(BaseModel,DateMixin):
 
 
 
-
-
-
 class Company(DateMixin):
     dis_price = models.FloatField(blank=True, null=True)
     coupon = models.CharField(max_length=100,blank=True, null=True, unique=True)
     status = models.CharField(max_length=50, choices=COMPANY_STATUS_CHOICES, default="Activate")
 
-
-    def __str__(self) -> str:
+    def __str__(self):
         return self.coupon
 
     
+
+class Category(BaseModel, MPTTModel, DateMixin):
+    parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
+
+    def __str__(self):
+        return self.name
+    
+    class Meta:
+        verbose_name = 'Category'
+        verbose_name_plural = 'Categories'
+    
+    class MPTTMeta:
+        order_insertion_by = ['name']
 
 
 
@@ -152,6 +141,7 @@ class Company(DateMixin):
 class Product(DateMixin):
     title = models.CharField(max_length=100, blank=True, null=True)
     description = RichTextField(blank=True, null=True)
+    aditional_info = models.TextField(blank=True, null=True)
     size = models.ManyToManyField(Size, blank=True)
     color = models.ManyToManyField(Color, blank=True)
     view = models.IntegerField(default=0)
@@ -170,14 +160,33 @@ class Product(DateMixin):
             self.sku = generate_random_number()
         super().save(*args, **kwargs)
 
-
     def __str__(self):
         return self.title
-    
 
     class Meta:
         verbose_name = 'Product'
         verbose_name_plural = 'Products'
+
+    
+
+
+
+
+
+def upload_to_product(instance, filename):
+    return f"product/{instance.product.title}/{filename}"
+
+class ProductImage(DateMixin):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to=upload_to_product, blank=True, null=True)
+
+    def __str__(self):
+        return self.product.title
+
+    class Meta:
+        verbose_name = 'ProductImage'
+        verbose_name_plural = 'ProductImages'
+
 
 
 
@@ -191,34 +200,12 @@ class Basket(DateMixin):
     def __str__(self):
             return self.user.email
     
-
     class Meta:
         verbose_name = 'Basket'
         verbose_name_plural = 'Basket'
 
 
 
-
-
-
-def upload_to_product(instance, filename):
-    return f"product/{instance.product.title}/{filename}"
-
-
-class ProductImage(DateMixin):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to=upload_to_product, blank=True, null=True)
-
-
-    def __str__(self):
-        return self.product.title
-    
-
-    class Meta:
-        verbose_name = 'ProductImage'
-        verbose_name_plural = 'ProductImages'
-
-    
 
 
 
@@ -229,11 +216,9 @@ class ProductsReview(MPTTModel, DateMixin):
     message = models.TextField(max_length=300)
     rating = models.PositiveIntegerField(blank=True, null=True, choices=Rating)
 
-
     def __str__(self):
         return self.user.email
     
-
     class Meta:
         verbose_name_plural = "Comments"
         verbose_name = "Comment"
