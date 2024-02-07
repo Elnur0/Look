@@ -32,6 +32,24 @@ class LoginSerializer(serializers.ModelSerializer):
         password = validated_data.get("password")
         return authenticate(email=email, password=password)
     
+    
+    def validate(self, attrs):
+        email = attrs.get("email")
+        password = attrs.get("password")
+
+        try:
+            user = User.objects.get(email=email)
+        except:
+            raise serializers.ValidationError({"error": "No account with this email."})
+
+        if not user.check_password(password):
+            raise serializers.ValidationError({"error": "Password is wrong."})
+
+        if not user.is_active:
+            raise serializers.ValidationError({"error": "This account is not activate."})
+
+        return super().validate(attrs)
+    
 
     def to_representation(self, instance):
         repr_ = super().to_representation(instance)
