@@ -211,6 +211,12 @@ class CategoryView(generics.ListAPIView):
     serializer_class = CategorySerializer
 
 
+class CategoryDetailView(generics.RetrieveAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    lookup_field = "id"
+
+
 
 
 class SizeView(generics.ListAPIView):

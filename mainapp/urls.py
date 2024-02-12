@@ -12,6 +12,7 @@ urlpatterns = [
     path("basket-list/", views.BasketListView.as_view(), name="basket-list"),
     path('review/<id>/', views.ReviewView.as_view(), name='review'),
     path('categores/', views.CategoryView.as_view(), name='category'),
+    path("categores/detail/<id>/", views.CategoryDetailView.as_view(), name="category-detail"),
     path('sizes/', views.SizeView.as_view(), name='size'),
     path('colors/', views.ColorView.as_view(), name='color'),
     path('brends/', views.BrendView.as_view(), name='brend'),
